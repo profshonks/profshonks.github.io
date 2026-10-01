@@ -1,6 +1,6 @@
 ---
 permalink: /
-title: "Sara Shonkwiler"
+title: "Fabrication, optimization, and representation in manufacturing (FORM) Lab"
 author_profile: true
 redirect_from: 
   - /about/
