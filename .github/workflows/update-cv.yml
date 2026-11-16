@@ -1,5 +1,5 @@
 
-name: Update CV from Overleaf
+name: Automatically Update CV from Overleaf
 
 on:
   workflow_dispatch:
