@@ -1,0 +1,116 @@
+
+name: Update CV from Overleaf
+
+on:
+  workflow_dispatch:
+
+  schedule:
+    # Every 6 hours (UTC)
+    - cron: "0 */6 * * *"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-cv
+  cancel-in-progress: false
+
+jobs:
+  update-cv:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out website repository
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Download latest CV from Overleaf
+        env:
+          OVERLEAF_TOKEN: ${{ secrets.OVERLEAF_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ -z "$OVERLEAF_TOKEN" ]; then
+            echo "OVERLEAF_TOKEN secret is missing."
+            exit 1
+          fi
+
+          # Authenticate without putting the token in the URL.
+          ASKPASS="$(mktemp)"
+          trap 'rm -f "$ASKPASS"' EXIT
+
+          cat > "$ASKPASS" <<'EOF'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' "git" ;;
+            *Password*) printf '%s\n' "$OVERLEAF_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          EOF
+
+          chmod 700 "$ASKPASS"
+
+          export GIT_ASKPASS="$ASKPASS"
+          export GIT_TERMINAL_PROMPT=0
+
+          git -c credential.helper= clone \
+            --depth 1 \
+            https://git.overleaf.com/5f872ceaea22c000018e09fc \
+            overleaf-cv
+
+          test -f \
+            overleaf-cv/professor_cv_fall_2026.tex
+
+      - name: Compile CV PDF
+        uses: xu-cheng/latex-action@v4
+        with:
+          root_file: professor_cv_fall_2026.tex
+          working_directory: overleaf-cv
+          compiler: latexmk
+          args: >-
+            -pdf
+            -file-line-error
+            -halt-on-error
+            -interaction=nonstopmode
+
+      - name: Copy compiled CV to website
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          SOURCE="overleaf-cv/professor_cv_fall_2026.pdf"
+          DEST="files/Sara_Shonkwiler_CV.pdf"
+
+          test -s "$SOURCE"
+
+          # Verify that the result is a PDF.
+          head -c 5 "$SOURCE" | grep -q '%PDF-'
+
+          mkdir -p files
+          cp "$SOURCE" "$DEST"
+
+          echo "CV successfully compiled."
+
+      - name: Commit and publish updated CV
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          git config user.name "github-actions[bot]"
+          git config user.email \
+            "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add files/Sara_Shonkwiler_CV.pdf
+
+          if git diff --cached --quiet; then
+            echo "CV has not changed. Nothing to publish."
+            exit 0
+          fi
+
+          git commit -m "Automatically update CV from Overleaf"
+
+          # Incorporate any changes made since checkout.
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
