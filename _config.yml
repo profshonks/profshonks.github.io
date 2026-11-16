@@ -23,7 +23,7 @@ repository               : "profshonks/profshonks.github.io"
 #               Additional customization can be done by editing /_includes/author-profile.html
 author:
   # Biographic information
-  avatar           : "https://profshonks.github.io/images/image0.jpeg" #"/images/image0.jpeg" #"images/image0.jpeg"
+  avatar           : "image0.jpeg" #"/images/image0.jpeg" #"images/image0.jpeg"
   name             : "Sara Shonkwiler"
   pronouns         : # example: "she/her"  
   bio              : "Assistant Professor at the University of Nevada, Reno"
