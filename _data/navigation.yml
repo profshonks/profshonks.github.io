@@ -24,7 +24,7 @@ main:
   #  url: /year-archive/
     
   - title: "CV"
-  url: /files/Sara_Shonkwiler_CV.pdf
+    url: /files/Sara_Shonkwiler_CV.pdf
     
   # - title: "CV"
   #   url: /cv-json/
