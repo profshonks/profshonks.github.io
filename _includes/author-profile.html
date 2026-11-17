@@ -6,11 +6,33 @@
 
 <div itemscope itemtype="http://schema.org/Person">
 
-  <div class="author__avatar">
+  <div class="author__avatar"
+       style="width: 170px;
+              height: 155px;
+              max-width: 100%;
+              margin: 0 auto 15px;
+              overflow: hidden;
+              border-radius: 0;
+              float: none;">
+  
     {% if author.avatar contains "://" %}
-    	<img src="{{ author.avatar }}" alt="{{ author.name }}" fetchpriority="high" style="width: 120px; height: auto;" />
+      <img src="{{ author.avatar }}"
+           alt="{{ author.name }}"
+           fetchpriority="high"
+           style="width: 100%;
+                  height: auto;
+                  max-width: none;
+                  display: block;
+                  border-radius: 0;" />
     {% else %}
-    	<img src="{{ author.avatar | prepend: "/images/" | prepend: base_path }}" class="author__avatar" alt="{{ author.name }}" fetchpriority="high" style="width: 120px; height: auto;" />
+      <img src="{{ author.avatar | prepend: "/images/" | prepend: base_path }}"
+           alt="{{ author.name }}"
+           fetchpriority="high"
+           style="width: 100%;
+                  height: auto;
+                  max-width: none;
+                  display: block;
+                  border-radius: 0;" />
     {% endif %}
   </div>
 
