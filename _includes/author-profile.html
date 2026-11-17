@@ -5,15 +5,16 @@
 {% endif %}
 
 <div itemscope itemtype="http://schema.org/Person">
-
   <div class="author__avatar"
        style="width: 170px;
-              height: 155px;
+              height: 190px;
               max-width: 100%;
-              margin: 0 auto 15px;
+              margin: 0 0 15px 0;
               overflow: hidden;
-              border-radius: 0;
-              float: none;">
+              border-radius: 50%;
+              float: none;
+              padding: 0;
+              box-sizing: border-box;">
   
     {% if author.avatar contains "://" %}
       <img src="{{ author.avatar }}"
@@ -23,6 +24,8 @@
                   height: auto;
                   max-width: none;
                   display: block;
+                  margin-top: -5px;
+                  border: none;
                   border-radius: 0;" />
     {% else %}
       <img src="{{ author.avatar | prepend: "/images/" | prepend: base_path }}"
@@ -32,6 +35,8 @@
                   height: auto;
                   max-width: none;
                   display: block;
+                  margin-top: -5px;
+                  border: none;
                   border-radius: 0;" />
     {% endif %}
   </div>
